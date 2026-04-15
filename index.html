@@ -223,13 +223,13 @@ body{
 .tarot-deck-card.base-3{ transform:translate(0, 0) rotate(0deg); }
 
 .tarot-deck-card.shuffle-a{
-    animation:deckShuffleA .55s ease;
+    animation:deckShuffleA .45s ease;
 }
 .tarot-deck-card.shuffle-b{
-    animation:deckShuffleB .55s ease;
+    animation:deckShuffleB .45s ease;
 }
 .tarot-deck-card.shuffle-c{
-    animation:deckShuffleC .55s ease;
+    animation:deckShuffleC .45s ease;
 }
 
 @keyframes deckShuffleA{
@@ -713,12 +713,12 @@ body{
         const picked = pickUniqueCards(cards, 2);
 
         window.setTimeout(function () {
-            dealCards(picked);
-        }, 650);
+            hideDeck();
+        }, 520);
 
         window.setTimeout(function () {
-            hideDeck();
-        }, 1000);
+            dealCards(picked);
+        }, 620);
     }
 
     document.addEventListener("DOMContentLoaded", function () {
