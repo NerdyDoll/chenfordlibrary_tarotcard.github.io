@@ -435,16 +435,22 @@ body{
 }
 
 /* mobile */
-@media screen and (max-width: 480px){
+@media screen and (max-width: 420px){
     .tarot-results{
-        display:flex;
         flex-direction:column;
-        gap:14px;
+        align-items:center;
+        justify-content:flex-start;
+        gap:18px;
         min-height:0;
     }
 
     .tarot-result-slot{
-        min-height:320px;
+        flex:none;
+        width:100%;
+        min-height:0;
+        display:flex;
+        justify-content:center;
+        align-items:flex-start;
     }
 
     .tarot-drawn-card{
@@ -454,23 +460,13 @@ body{
         margin:0 auto;
     }
 
-    .tarot-deck-area{
-        height:10px;
+    .tarot-section{
+        padding:20px;
     }
 
     .tarot-deck{
         width:130px;
         height:182px;
-    }
-
-    .tarot-drawn-prompt{
-        padding:14px 12px;
-        font-size:.94rem;
-        line-height:1.65;
-    }
-
-    .tarot-section{
-        padding:20px;
     }
 }
 </style>
