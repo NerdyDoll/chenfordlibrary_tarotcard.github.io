@@ -1,0 +1,711 @@
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarot Card Generator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+  --sans:'Source Sans 3','Helvetica','Arial',sans-serif;
+  --serif:'Playfair Display','Times New Roman',serif;
+
+  --body-background:#f5f5f5;
+  --post-background:#ffffff;
+  --text-color:#656565;
+  --border-color:#eeeeee;
+
+  --color-one:#dd8bce;
+  --color-two:#5dba8b;
+  --gradient:var(--color-one), var(--color-two);
+}
+
+body{
+  margin:0;
+  padding:24px;
+  background:var(--body-background);
+  color:var(--text-color);
+  font:14px/1.6 var(--sans);
+}
+
+.generator-wrap{
+  max-width:900px;
+  margin:0 auto;
+  background:var(--post-background);
+  padding:30px;
+  border:1px solid var(--border-color);
+}
+
+*{
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* tarot prompt spread picker */
+
+.tarot-card-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform .45s ease;
+}
+
+.tarot-face{
+    position:absolute;
+    inset:0;
+    border:1px solid var(--border-color);
+    background:var(--post-background);
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+    border-radius:14px;
+}
+
+.tarot-front img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.tarot-front::after{
+    content:"click to reveal";
+    position:absolute;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    padding:6px 12px;
+    background:rgba(255,255,255,.92);
+    color:var(--text-color);
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    border-radius:999px;
+    white-space:nowrap;
+}
+
+.tarot-card-title{
+    margin:0 0 8px;
+    font-family:var(--serif);
+    font-size:1.15rem;
+    line-height:1.1;
+    color:var(--text-color);
+}
+
+.tarot-card-subtitle{
+    margin:0;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.7;
+}
+
+.tarot-prompt-box{
+    flex:1 1 auto;
+    min-height:0;
+    border:1px solid var(--border-color);
+    background:linear-gradient(135deg, rgba(221,139,206,.08), rgba(93,186,139,.08));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:16px 14px;
+    font-size:1rem;
+    line-height:1.7;
+    overflow:auto;
+}
+
+.tarot-action{
+    flex:0 0 auto;
+    margin:0;
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    opacity:.65;
+    line-height:1.2;
+    padding-top:2px;
+}
+
+.tarot-note{
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid var(--border-color);
+    font-size:.86rem;
+    line-height:1.7;
+    opacity:.85;
+}
+
+
+.tarot-section{
+    overflow:hidden;
+}
+
+.tarot-intro{
+    margin:0 0 18px;
+    font-size:.96rem;
+    line-height:1.75;
+}
+
+.tarot-shuffle-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 18px;
+    margin-bottom:24px;
+    border:1px solid var(--border-color);
+    background:var(--post-background);
+    font-family:var(--serif);
+    font-size:1rem;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.tarot-shuffle-btn:hover{
+    color:#fff;
+    border-color:transparent;
+    background-image:linear-gradient(135deg, var(--gradient));
+}
+
+.tarot-table{
+    position:relative;
+}
+
+.tarot-deck-area{
+    position:relative;
+    height:0;
+    margin-bottom:0;
+    pointer-events:none;
+    z-index:3;
+}
+
+.tarot-deck{
+    position:absolute;
+    left:50%;
+    top:18px;
+    width:150px;
+    height:210px;
+    transform:translateX(-50%);
+}
+
+.tarot-deck-card{
+    position:absolute;
+    inset:0;
+    border:1px solid var(--border-color);
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--post-background);
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+}
+
+.tarot-deck-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.tarot-deck-card.base-1{ transform:translate(-10px, 8px) rotate(-6deg); }
+.tarot-deck-card.base-2{ transform:translate(10px, 8px) rotate(6deg); }
+.tarot-deck-card.base-3{ transform:translate(0, 0) rotate(0deg); }
+
+.tarot-deck-card.shuffle-a{
+    animation:deckShuffleA .55s ease;
+}
+.tarot-deck-card.shuffle-b{
+    animation:deckShuffleB .55s ease;
+}
+.tarot-deck-card.shuffle-c{
+    animation:deckShuffleC .55s ease;
+}
+
+@keyframes deckShuffleA{
+    0%{ transform:translate(-10px, 8px) rotate(-6deg); }
+    50%{ transform:translate(-30px, -4px) rotate(-13deg); }
+    100%{ transform:translate(-10px, 8px) rotate(-6deg); }
+}
+@keyframes deckShuffleB{
+    0%{ transform:translate(10px, 8px) rotate(6deg); }
+    50%{ transform:translate(30px, -2px) rotate(13deg); }
+    100%{ transform:translate(10px, 8px) rotate(6deg); }
+}
+@keyframes deckShuffleC{
+    0%{ transform:translate(0, 0) rotate(0deg); }
+    50%{ transform:translate(0, -14px) rotate(0deg); }
+    100%{ transform:translate(0, 0) rotate(0deg); }
+}
+
+.tarot-results{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:24px;
+}
+
+.tarot-result-slot{
+    min-height:520px;
+    position:relative;
+}
+
+.tarot-drawn-card{
+    position:relative;
+    width:100%;
+    aspect-ratio:8 / 11;
+    perspective:1200px;
+    border-radius:14px;
+}
+
+.tarot-drawn-card-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    transform-style:preserve-3d;
+    transition:transform .55s ease;
+    border-radius:14px;
+}
+
+.tarot-drawn-card.is-flipped .tarot-drawn-card-inner{
+    transform:rotateY(180deg);
+}
+
+.tarot-drawn-face{
+    position:absolute;
+    inset:0;
+    border:1px solid var(--border-color);
+    background:var(--post-background);
+    border-radius:14px;
+    overflow:hidden;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+}
+
+.tarot-drawn-front{
+    cursor:pointer;
+}
+
+.tarot-drawn-front img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.tarot-drawn-front::after{
+    content:"click to reveal";
+    position:absolute;
+    left:50%;
+    bottom:14px;
+    transform:translateX(-50%);
+    padding:6px 12px;
+    background:rgba(255,255,255,.92);
+    color:var(--text-color);
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    border-radius:999px;
+    white-space:nowrap;
+}
+
+.tarot-drawn-back{
+    transform:rotateY(180deg);
+    padding:16px 14px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-align:center;
+}
+
+.tarot-drawn-title{
+    margin:0;
+    font-family:var(--serif);
+    font-size:1.15rem;
+    line-height:1.1;
+    color:var(--text-color);
+}
+
+.tarot-drawn-subtitle{
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.7;
+}
+
+.tarot-drawn-prompt{
+    flex:1 1 auto;
+    border:1px solid var(--border-color);
+    background:linear-gradient(135deg, rgba(221,139,206,.08), rgba(93,186,139,.08));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:16px 14px;
+    font-size:1rem;
+    line-height:1.7;
+}
+
+.tarot-drawn-action{
+    font-size:.72rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    opacity:.65;
+}
+
+.tarot-deal-left{
+    animation:dealLeft .7s ease forwards;
+}
+
+.tarot-deal-right{
+    animation:dealRight .7s ease forwards;
+}
+
+@keyframes dealLeft{
+    0%{
+        opacity:0;
+        transform:translate(50%, -60px) scale(.88) rotate(-10deg);
+    }
+    100%{
+        opacity:1;
+        transform:translate(0, 0) scale(1) rotate(0deg);
+    }
+}
+
+@keyframes dealRight{
+    0%{
+        opacity:0;
+        transform:translate(-50%, -60px) scale(.88) rotate(10deg);
+    }
+    100%{
+        opacity:1;
+        transform:translate(0, 0) scale(1) rotate(0deg);
+    }
+}
+
+.tarot-source-library{
+    display:none;
+}
+
+@keyframes tarotReveal{
+    from{
+        opacity:0;
+        transform:translateY(14px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* mobile */
+@media screen and (max-width: 900px){   
+    .tarot-grid{
+        grid-template-columns:1fr;
+        gap:18px;
+    }
+
+    .tarot-card{
+        max-width:340px;
+        margin:0 auto;
+    }
+
+    .tarot-prompt-box{
+        min-height:0;
+        padding:14px 12px;
+        font-size:.94rem;
+        line-height:1.65;
+    }
+
+    .tarot-results{
+        grid-template-columns:1fr;
+        gap:5px;
+    }
+
+    .tarot-result-slot{
+        min-height:360px;
+    }
+
+    .tarot-drawn-card{
+        max-width:280px;
+        margin:0 auto;
+    }
+
+    .tarot-deck-area{
+        height:10px;
+    }
+
+    .tarot-deck{
+        width:130px;
+        height:182px;
+    }
+
+    .tarot-drawn-prompt{
+        padding:14px 12px;
+        font-size:.94rem;
+        line-height:1.65;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="generator-wrap">
+
+
+        <section class="tarot-section">
+            <h2 class="page-title">Tarot Prompt Draw</h2>
+
+            <div class="tarot-intro">
+                Click shuffle to mix the deck and deal two random cards. Then click each card to reveal its prompt.
+            </div>
+
+            <button type="button" id="shuffle-cards" class="tarot-shuffle-btn">
+                Shuffle Cards
+            </button>
+
+            <div class="tarot-table">
+                <div class="tarot-deck-area" id="tarot-deck-area"></div>
+
+                <div class="tarot-results">
+                    <div class="tarot-result-slot" id="tarot-result-1"></div>
+                    <div class="tarot-result-slot" id="tarot-result-2"></div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="tarot-source-library" id="tarot-source-library">
+
+            <div class="tarot-source-card" data-card-id="lovers">
+                <div class="tarot-source-title">The Lovers</div>
+                <div class="tarot-source-subtitle">Connection</div>
+                <div class="tarot-source-image">https://64.media.tumblr.com/74751a8a5bf15c002c2c159817a027ed/tumblr_inline_td8q1d0Os41tuj1rd_500.jpg</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+            <div class="tarot-source-card" data-card-id="death">
+                <div class="tarot-source-title">Death</div>
+                <div class="tarot-source-subtitle">Endings / Transformation</div>
+                <div class="tarot-source-image">https://via.placeholder.com/700x1200?text=Death</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+            <div class="tarot-source-card" data-card-id="tower">
+                <div class="tarot-source-title">The Tower</div>
+                <div class="tarot-source-subtitle">Chaos / Shock</div>
+                <div class="tarot-source-image">https://via.placeholder.com/700x1200?text=The+Tower</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+            <div class="tarot-source-card" data-card-id="moon">
+                <div class="tarot-source-title">The Moon</div>
+                <div class="tarot-source-subtitle">Illusion / Fear</div>
+                <div class="tarot-source-image">https://via.placeholder.com/700x1200?text=The+Moon</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+            <div class="tarot-source-card" data-card-id="star">
+                <div class="tarot-source-title">The Star</div>
+                <div class="tarot-source-subtitle">Hope / Healing</div>
+                <div class="tarot-source-image">https://via.placeholder.com/700x1200?text=The+Star</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+        </div>
+
+
+</div>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="0" height="0" style="display:block">
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientTransform="rotate(-45)" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#bdc2e8"></stop>
+            <stop offset="100%" stop-color="#e6dee9"></stop>
+        </linearGradient>
+    </defs>
+</svg>
+
+<script>
+(function () {
+    function randomItem(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function shuffleArray(array) {
+        const copy = array.slice();
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    function parseCardsFromHTML() {
+        const sourceCards = document.querySelectorAll(".tarot-source-card");
+        const cards = [];
+
+        sourceCards.forEach((card) => {
+            const id = card.dataset.cardId || "";
+            const title = card.querySelector(".tarot-source-title")?.textContent.trim() || "Untitled";
+            const subtitle = card.querySelector(".tarot-source-subtitle")?.textContent.trim() || "";
+            const image = card.querySelector(".tarot-source-image")?.textContent.trim() || "";
+            const prompts = Array.from(card.querySelectorAll(".tarot-source-prompts li"))
+                .map(li => li.textContent.trim())
+                .filter(Boolean);
+
+            if (image && prompts.length) {
+                cards.push({
+                    id,
+                    title,
+                    subtitle,
+                    image,
+                    prompts
+                });
+            }
+        });
+
+        return cards;
+    }
+
+    function pickUniqueCards(cards, amount) {
+        return shuffleArray(cards).slice(0, amount);
+    }
+
+    function buildDeckHTML(images) {
+        const img1 = images[0] || "";
+        const img2 = images[1] || img1;
+        const img3 = images[2] || img1;
+
+        return `
+            <div class="tarot-deck">
+                <div class="tarot-deck-card base-1 shuffle-a"><img src="${img1}" alt=""></div>
+                <div class="tarot-deck-card base-2 shuffle-b"><img src="${img2}" alt=""></div>
+                <div class="tarot-deck-card base-3 shuffle-c"><img src="${img3}" alt=""></div>
+            </div>
+        `;
+    }
+
+    function buildDrawnCardHTML(card, sideClass) {
+        const chosenPrompt = randomItem(card.prompts);
+
+        return `
+            <div class="tarot-drawn-card ${sideClass}">
+                <div class="tarot-drawn-card-inner">
+                    <div class="tarot-drawn-face tarot-drawn-front">
+                        <img src="${card.image}" alt="${card.title}">
+                    </div>
+                    <div class="tarot-drawn-face tarot-drawn-back">
+                        <h3 class="tarot-drawn-title">${card.title}</h3>
+                        <div class="tarot-drawn-subtitle">${card.subtitle}</div>
+                        <div class="tarot-drawn-prompt">${chosenPrompt}</div>
+                        <div class="tarot-drawn-action">click again to close</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachFlipBehavior(slotId) {
+        const slot = document.getElementById(slotId);
+        if (!slot) return;
+
+        const card = slot.querySelector(".tarot-drawn-card");
+        if (!card) return;
+
+        card.addEventListener("click", function () {
+            card.classList.toggle("is-flipped");
+        });
+    }
+
+    function clearResults() {
+        const slot1 = document.getElementById("tarot-result-1");
+        const slot2 = document.getElementById("tarot-result-2");
+        if (slot1) slot1.innerHTML = "";
+        if (slot2) slot2.innerHTML = "";
+    }
+
+    function showDeck(cards) {
+        const deckArea = document.getElementById("tarot-deck-area");
+        if (!deckArea) return;
+
+        const shuffled = shuffleArray(cards);
+        const images = shuffled.slice(0, 3).map(card => card.image);
+        deckArea.innerHTML = buildDeckHTML(images);
+    }
+
+    function hideDeck() {
+        const deckArea = document.getElementById("tarot-deck-area");
+        if (deckArea) {
+            deckArea.innerHTML = "";
+        }
+    }
+
+    function dealCards(picked) {
+        const slot1 = document.getElementById("tarot-result-1");
+        const slot2 = document.getElementById("tarot-result-2");
+
+        if (slot1) slot1.innerHTML = buildDrawnCardHTML(picked[0], "tarot-deal-left");
+        if (slot2) slot2.innerHTML = buildDrawnCardHTML(picked[1], "tarot-deal-right");
+
+        attachFlipBehavior("tarot-result-1");
+        attachFlipBehavior("tarot-result-2");
+    }
+
+    function shuffleAndRender() {
+        const cards = parseCardsFromHTML();
+        if (cards.length < 2) return;
+
+        clearResults();
+        showDeck(cards);
+
+        const picked = pickUniqueCards(cards, 2);
+
+        window.setTimeout(function () {
+            dealCards(picked);
+        }, 650);
+
+        window.setTimeout(function () {
+            hideDeck();
+        }, 1000);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const shuffleButton = document.getElementById("shuffle-cards");
+        if (shuffleButton) {
+            shuffleButton.addEventListener("click", shuffleAndRender);
+        }
+
+        shuffleAndRender();
+    });
+})();
+</script>
+</body>
+</html>
