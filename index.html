@@ -148,8 +148,9 @@ body{
 
 
 .tarot-section{
-    overflow:hidden;
+    overflow:visible;
     background:var(--post-background);
+    padding:20px;
 }
 
 .tarot-intro{
@@ -180,6 +181,7 @@ body{
 
 .tarot-table{
     position:relative;
+    overflow:visible;
 }
 
 .tarot-deck-area{
@@ -253,6 +255,9 @@ body{
     justify-content:center;
     flex-wrap:nowrap;
     min-height:330px;
+    overflow:visible;
+    position:relative;
+    z-index:2;
 }
 
 .tarot-result-slot{
@@ -262,6 +267,8 @@ body{
     position:relative;
     display:flex;
     justify-content:center;
+    align-items:flex-start;
+    overflow:visible;
 }
 
 .tarot-drawn-card{
@@ -273,6 +280,8 @@ body{
     perspective:1200px;
     border-radius:14px;
     flex:0 0 auto;
+    display:block;
+    z-index:3;
 }
 
 .tarot-drawn-card-inner{
@@ -371,6 +380,15 @@ body{
     opacity:.65;
 }
 
+.tarot-deck-area{
+    position:relative;
+    height:0;
+    margin-bottom:0;
+    pointer-events:none;
+    z-index:4;
+    overflow:visible;
+}
+
 .tarot-deal-left{
     animation:dealLeft .7s ease forwards;
 }
@@ -382,7 +400,7 @@ body{
 @keyframes dealLeft{
     0%{
         opacity:0;
-        transform:translate(50%, -60px) scale(.88) rotate(-10deg);
+        transform:translate(25%, -25px) scale(.94) rotate(-6deg);
     }
     100%{
         opacity:1;
@@ -393,7 +411,7 @@ body{
 @keyframes dealRight{
     0%{
         opacity:0;
-        transform:translate(-50%, -60px) scale(.88) rotate(10deg);
+        transform:translate(-25%, -25px) scale(.94) rotate(6deg);
     }
     100%{
         opacity:1;
