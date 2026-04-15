@@ -149,7 +149,6 @@ body{
 
 .tarot-section{
     overflow:hidden;
-    padding:30px;
     background:var(--post-background);
 }
 
@@ -248,21 +247,23 @@ body{
 }
 
 .tarot-results{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
+    display:flex;
     gap:18px;
-    align-items:start;
+    align-items:flex-start;
+    justify-content:center;
+    flex-wrap:nowrap;
 }
 
 .tarot-result-slot{
-    min-height:0;
+    flex:1 1 0;
+    min-width:0;
     position:relative;
 }
 
 .tarot-drawn-card{
     position:relative;
     width:100%;
-    max-width:250px;
+    max-width:220px;
     margin:0 auto;
     aspect-ratio:8 / 11;
     perspective:1200px;
@@ -413,7 +414,8 @@ body{
 /* mobile */
 @media screen and (max-width: 480px){
     .tarot-results{
-        grid-template-columns:1fr;
+        display:flex;
+        flex-direction:column;
         gap:14px;
     }
 
