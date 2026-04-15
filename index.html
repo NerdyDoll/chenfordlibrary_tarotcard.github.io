@@ -79,21 +79,7 @@ body{
     object-fit:cover;
 }
 
-.tarot-front::after{
-    content:"click to reveal";
-    position:absolute;
-    left:50%;
-    bottom:14px;
-    transform:translateX(-50%);
-    padding:6px 12px;
-    background:rgba(255,255,255,.92);
-    color:var(--text-color);
-    font-size:.72rem;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    border-radius:999px;
-    white-space:nowrap;
-}
+
 
 .tarot-card-title{
     margin:0 0 8px;
@@ -204,10 +190,10 @@ body{
 .tarot-deck-card{
     position:absolute;
     inset:0;
-    border:1px solid var(--border-color);
+    border:none;
     border-radius:14px;
     overflow:hidden;
-    background:var(--post-background);
+    background:transparent;
     box-shadow:0 10px 28px rgba(0,0,0,.08);
 }
 
@@ -320,21 +306,7 @@ body{
     display:block;
 }
 
-.tarot-drawn-front::after{
-    content:"click to reveal";
-    position:absolute;
-    left:50%;
-    bottom:14px;
-    transform:translateX(-50%);
-    padding:6px 12px;
-    background:rgba(255,255,255,.92);
-    color:var(--text-color);
-    font-size:.72rem;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    border-radius:999px;
-    white-space:nowrap;
-}
+
 
 .tarot-drawn-back{
     transform:rotateY(180deg);
@@ -434,6 +406,25 @@ body{
     }
 }
 
+.tarot-drawn-wrapper{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.tarot-drawn-hint{
+    margin-top:10px;
+    font-size:.6rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.6;
+}
+
+.tarot-drawn-card.is-flipped + .tarot-drawn-hint{
+    opacity:0;
+    pointer-events:none;
+}
+
 /* mobile */
 @media screen and (max-width: 420px){
     .tarot-results{
@@ -501,7 +492,46 @@ body{
             <div class="tarot-source-card" data-card-id="lovers">
                 <div class="tarot-source-title">The Lovers</div>
                 <div class="tarot-source-subtitle">Connection</div>
-                <div class="tarot-source-image">https://placeholder.jpg</div>
+                <div class="tarot-source-image">https://64.media.tumblr.com/c4497bb7dae0704d699ed116ed500eea/tumblr_inline_tdjzhoS4R51tuj1rd_500.jpg</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+            
+            <div class="tarot-source-card" data-card-id="moonstone">
+                <div class="tarot-source-title">The Hug</div>
+                <div class="tarot-source-subtitle">Connection</div>
+                <div class="tarot-source-image">https://64.media.tumblr.com/465bd3e1ee6550fb3713a341316d73ee/tumblr_inline_tdk4mkcsAF1tuj1rd_500.jpg</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+            
+            <div class="tarot-source-card" data-card-id="moonstone">
+                <div class="tarot-source-title">The Hug</div>
+                <div class="tarot-source-subtitle">Connection</div>
+                <div class="tarot-source-image">https://64.media.tumblr.com/c3700623d753fc6be0129c3ac8466a34/tumblr_inline_tdk2qdEzJu1tuj1rd_500.jpg</div>
+
+                <ul class="tarot-source-prompts">
+                    <li>Prompt #1</li>
+                    <li>Prompt #2</li>
+                    <li>Prompt #3</li>
+                    <li>Prompt #4</li>
+                </ul>
+            </div>
+
+            <div class="tarot-source-card" data-card-id="moonstone">
+                <div class="tarot-source-title">Moonstone</div>
+                <div class="tarot-source-subtitle">Connection</div>
+                <div class="tarot-source-image">https://64.media.tumblr.com/77bc745e2e2eb85f16f087ffb3d172d0/tumblr_inline_tdk1khhv7L1tuj1rd_500.jpg</div>
 
                 <ul class="tarot-source-prompts">
                     <li>Prompt #1</li>
@@ -641,18 +671,21 @@ body{
         const chosenPrompt = randomItem(card.prompts);
 
         return `
-            <div class="tarot-drawn-card ${sideClass}">
-                <div class="tarot-drawn-card-inner">
-                    <div class="tarot-drawn-face tarot-drawn-front">
-                        <img src="${card.image}" alt="${card.title}">
-                    </div>
-                    <div class="tarot-drawn-face tarot-drawn-back">
-                        <h3 class="tarot-drawn-title">${card.title}</h3>
-                        <div class="tarot-drawn-subtitle">${card.subtitle}</div>
-                        <div class="tarot-drawn-prompt">${chosenPrompt}</div>
-                        <div class="tarot-drawn-action">click again to close</div>
+            <div class="tarot-drawn-wrapper">
+                <div class="tarot-drawn-card ${sideClass}">
+                    <div class="tarot-drawn-card-inner">
+                        <div class="tarot-drawn-face tarot-drawn-front">
+                            <img src="${card.image}" alt="${card.title}">
+                        </div>
+                        <div class="tarot-drawn-face tarot-drawn-back">
+                            <h3 class="tarot-drawn-title">${card.title}</h3>
+                            <div class="tarot-drawn-subtitle">${card.subtitle}</div>
+                            <div class="tarot-drawn-prompt">${chosenPrompt}</div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="tarot-drawn-hint">click the card to reveal your prompt</div>
             </div>
         `;
     }
