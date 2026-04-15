@@ -23,20 +23,26 @@
   --gradient:var(--color-one), var(--color-two);
 }
 
-body{
+html, body{
   margin:0;
-  padding:24px;
-  background:var(--body-background);
+  padding:0;
+  width:100%;
+  background:transparent;
   color:var(--text-color);
   font:14px/1.6 var(--sans);
 }
 
+body{
+  overflow-x:hidden;
+}
+
 .generator-wrap{
-  max-width:900px;
-  margin:0 auto;
-  background:var(--post-background);
-  padding:30px;
-  border:1px solid var(--border-color);
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:none;
 }
 
 *{
@@ -52,6 +58,8 @@ body{
     transform-style:preserve-3d;
     transition:transform .45s ease;
 }
+
+
 
 .tarot-face{
     position:absolute;
@@ -141,6 +149,8 @@ body{
 
 .tarot-section{
     overflow:hidden;
+    padding:30px;
+    background:var(--post-background);
 }
 
 .tarot-intro{
@@ -240,17 +250,20 @@ body{
 .tarot-results{
     display:grid;
     grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:24px;
+    gap:18px;
+    align-items:start;
 }
 
 .tarot-result-slot{
-    min-height:520px;
+    min-height:0;
     position:relative;
 }
 
 .tarot-drawn-card{
     position:relative;
     width:100%;
+    max-width:250px;
+    margin:0 auto;
     aspect-ratio:8 / 11;
     perspective:1200px;
     border-radius:14px;
@@ -398,31 +411,14 @@ body{
 }
 
 /* mobile */
-@media screen and (max-width: 900px){   
-    .tarot-grid{
-        grid-template-columns:1fr;
-        gap:18px;
-    }
-
-    .tarot-card{
-        max-width:340px;
-        margin:0 auto;
-    }
-
-    .tarot-prompt-box{
-        min-height:0;
-        padding:14px 12px;
-        font-size:.94rem;
-        line-height:1.65;
-    }
-
+@media screen and (max-width: 600px){
     .tarot-results{
         grid-template-columns:1fr;
-        gap:5px;
+        gap:14px;
     }
 
     .tarot-result-slot{
-        min-height:360px;
+        min-height:0;
     }
 
     .tarot-drawn-card{
@@ -443,6 +439,10 @@ body{
         padding:14px 12px;
         font-size:.94rem;
         line-height:1.65;
+    }
+
+    .tarot-section{
+        padding:20px;
     }
 }
 </style>
